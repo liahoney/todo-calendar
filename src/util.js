@@ -46,10 +46,10 @@ export const getCalendarColumns = (now) => {
     const date = dayjs(start).add(i, "day");
     columns.push(date);
   }
-  console.log('columns 11월', columns);
+  // console.log('columns 1월', columns);
 
   const filledColumns = fillEmptyColumns(columns, start, end);
-  console.log('columns 최종', columns);
+  // console.log('columns 최종', columns);
   // ["10.31", "11.1", ..., "11.30", "12.1", "12.2", "12.3"]
   return filledColumns;
 };
@@ -66,7 +66,7 @@ export const getDayText = (day) => {
   /* Ex 2 */
   // switch (day) {
   //   case 0: return '일';
-  //   case 1: return '월';
+  //   case 1: return '월'; 
   //   case 2: return '화';
   //   case 3: return '수';
   //   case 4: return '목';
