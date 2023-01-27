@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
 
-import { getStatusBarHeight, getBottomSpace } from 'react-native-iphone-x-helper';
+import { getBottomSpace, getStatusBarHeight } from 'react-native-iphone-x-helper';
 
 export const statusBarHeight = getStatusBarHeight(true);
 export const bottomSpace = getBottomSpace();
