@@ -8,6 +8,7 @@ import { getDayText, getDayColor } from "./src/util";
 import Margin from "./src/Margin";
 import { SimpleLineIcons } from "@expo/vector-icons";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
+import { useCalendar } from "./src/hook/use-calendar";
 
 const columnSize = 30;
 
@@ -21,7 +22,7 @@ const Column = ({ text, color, opacity, disabled, onPress, isSelected }) => {
         height: columnSize,
         justifyContent: "center",
         alignItems: "center",
-        backgroundColor: isSelected?  "#c2c2c2" : "transparent",
+        backgroundColor: isSelected ? "#c2c2c2" : "transparent",
         borderRadius: columnSize / 2,
       }}
     >
@@ -32,48 +33,38 @@ const Column = ({ text, color, opacity, disabled, onPress, isSelected }) => {
 
 export default function App() {
   const now = dayjs();
-  const [selectedDate, setSelectedDate] = useState(now);
+
+  const {
+    selectedDate,
+    isDatePickerVisible,
+    showDatePicker,
+    hideDatePicker,
+    handleConfirm,
+    subtract1Month,
+    add1Month,
+    setSelectedDate,
+  } = useCalendar(now);
+
   const columns = getCalendarColumns(selectedDate);
 
+  const onPressLeftArrow = subtract1Month;
 
-  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+  const onPressRightArrow = add1Month;
 
-  const showDatePicker = () => {
-    setDatePickerVisibility(true);
-  };
-
-  const hideDatePicker = () => {
-    setDatePickerVisibility(false);
-  };
-
-  const handleConfirm = (date) => {
-   
-    setSelectedDate(dayjs(date))
-    hideDatePicker();
-  };
-
-  const onPressLeftArrow = () => {
-    const newSelectedDate = dayjs(selectedDate).subtract(1, 'month')
-    setSelectedDate(newSelectedDate)
-  }
-
-  const onPressRightArrow = () => {
-    const newSelectedDate = dayjs(selectedDate).add(1, 'month')
-    setSelectedDate(newSelectedDate)
-  }
-
-  const ArrowButton = ({onPress, iconName}) => {
+  const ArrowButton = ({ onPress, iconName }) => {
     return (
-      <TouchableOpacity onPress={onPress} style={{paddingHorizontal: 20, paddingVertical: 15}}>
-            <SimpleLineIcons name={iconName} size={15} color="#404040" />
-          </TouchableOpacity>
-    )
-  }
+      <TouchableOpacity
+        onPress={onPress}
+        style={{ paddingHorizontal: 20, paddingVertical: 15 }}
+      >
+        <SimpleLineIcons name={iconName} size={15} color="#404040" />
+      </TouchableOpacity>
+    );
+  };
   const ListHeaderComponent = () => {
     const currentDateText = dayjs(selectedDate).format("YYYY.MM.DD.");
     return (
       <View>
-        
         {/* YYYY.MM.DD */}
         <View
           style={{
@@ -82,7 +73,7 @@ export default function App() {
             alignItems: "center",
           }}
         >
-          <ArrowButton iconName="arrow-left" onPress={onPressLeftArrow}/>
+          <ArrowButton iconName="arrow-left" onPress={onPressLeftArrow} />
 
           <TouchableOpacity onPress={showDatePicker}>
             <Text style={{ fontSize: 20, color: "#404040" }}>
@@ -90,10 +81,8 @@ export default function App() {
             </Text>
           </TouchableOpacity>
 
-          <ArrowButton iconName="arrow-right" onPress={onPressRightArrow}/>
-
+          <ArrowButton iconName="arrow-right" onPress={onPressRightArrow} />
         </View>
-        
 
         <View style={{ flexDirection: "row" }}>
           {/* 일~토 */}
@@ -121,9 +110,9 @@ export default function App() {
     const color = day === 0 ? "#e67639" : day === 6 ? "#5872d1" : "#2b2b2b";
     const isCurrentMonth = dayjs(date).isSame(selectedDate, "month");
     const onPress = () => {
-      setSelectedDate(date)
-    }
-    const isSelected = dayjs(date).isSame(selectedDate, 'date')
+      setSelectedDate(date);
+    };
+    const isSelected = dayjs(date).isSame(selectedDate, "date");
     return (
       <Column
         text={dateText}
@@ -140,8 +129,11 @@ export default function App() {
   });
 
   useEffect(() => {
-    console.log('change selectedDate?', dayjs(selectedDate).format("YYYY.MM.DD"))
-  },[selectedDate])
+    console.log(
+      "change selectedDate?",
+      dayjs(selectedDate).format("YYYY.MM.DD")
+    );
+  }, [selectedDate]);
   return (
     <SafeAreaView style={styles.container}>
       <FlatList
