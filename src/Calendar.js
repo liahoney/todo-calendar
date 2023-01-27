@@ -4,7 +4,7 @@ import { FlatList, TouchableOpacity, View, Text } from "react-native";
 import { getDayColor, getDayText } from "./util";
 import { getStatusBarHeight } from "react-native-iphone-x-helper";
 import { SimpleLineIcons } from "@expo/vector-icons";
-const statusBarHeight = getStatusBarHeight(true);
+
 
 const columnSize = 30;
 export default ({
@@ -109,7 +109,6 @@ export default ({
     <FlatList
       scrollEnabled={false}
       data={columns}
-      contentContainerStyle={{ paddingTop: statusBarHeight }}
       numColumns={7}
       renderItem={renderItem}
       ListHeaderComponent={ListHeaderComponent}
