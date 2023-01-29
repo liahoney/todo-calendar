@@ -69,8 +69,22 @@ export default function App() {
           position: "absolute",
         }}
       />
+       <FlatList
+      scrollEnabled={false}
+      data={columns}
+      numColumns={7}
       
-
+      ListHeaderComponent={ListHeaderComponent}
+      keyExtractor={(_, index) => `column-${index}`}
+    />
+     <Calendar 
+      columns={columns}
+      selectedDate={selectedDate}
+      onPressLeftArrow={onPressLeftArrow}
+      onPressHeaderDate={onPressHeaderDate}
+      onPressRightArrow={onPressRightArrow}
+      onPressDate={onPressDate}
+    />
       <FlatList
         
         data={todoList}
