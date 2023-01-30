@@ -1,17 +1,20 @@
 
 import dayjs from "dayjs";
-import { useEffect} from "react";
+import { useEffect, useRef} from "react";
 import { FlatList, StyleSheet, Text } from "react-native";
-import { getCalendarColumns } from "./src/util";
+import { getCalendarColumns, ITEM_WIDTH } from "./src/util";
 import { View } from "react-native";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { useCalendar } from "./src/hook/use-calendar";
 import { useTodoList } from "./src/hook/use-todo-list";
 import { Image } from "react-native";
 import Calendar from "./src/Calendar";
-import { getStatusBarHeight } from "react-native-iphone-x-helper";
+import Margin from "./src/Margin";
+import { statusBarHeight } from "./src/util";
+import {Ionicons} from '@expo/vector-icons'
+import AddTodoInput from "./src/AddTodoInput";
 
-const statusBarHeight = getStatusBarHeight(true);
+
 
 export default function App() {
   const now = dayjs();
@@ -27,16 +30,29 @@ export default function App() {
     setSelectedDate,
   } = useCalendar(now);
 
-  const { todoList } = useTodoList(selectedDate);
+  const { 
+    todoList,
+    filteredTodoList,
+    input,
+    setInput,
+    toggleTodo,
+    removeTodo,
+    addTodo,
+
+    resetInput } = useTodoList(selectedDate);
   const columns = getCalendarColumns(selectedDate);
+
+  const flatListRef = useRef(null);
 
   const onPressLeftArrow = subtract1Month;
   const onPressHeaderDate = showDatePicker;
   const onPressRightArrow = add1Month;
   const onPressDate = setSelectedDate;
 
-  const ListHeaderComponent = () => {
+  const ListHeaderComponent = () => (
+    <View>
     <Calendar
+        todoList={todoList}
         columns={columns}
         selectedDate={selectedDate}
         onPressLeftArrow={onPressLeftArrow}
@@ -44,6 +60,41 @@ export default function App() {
         onPressRightArrow={onPressRightArrow}
         onPressDate={onPressDate}
       />
+       <Margin height={15}/>
+      <View 
+      style={{
+        width: 4, 
+        height: 4, 
+        borderRadius: 4 / 2, 
+        backgroundColor: "#a3a3a3",
+        alignSelf: "center",
+        }}/>
+       <Margin height={15}/>
+      </View>
+  )
+    
+  
+
+  const renderItem = ({ item: todo }) => {
+    const isSuccess = todo.isSuccess;
+    return (
+      <View style={{
+      flexDirection: "row", 
+      width: ITEM_WIDTH, 
+      // backgroundColor: todo.id % 2 === 0  ? "pink": "lightblue",
+      paddingVertical: 10, 
+      paddingHorizontal: 5, 
+      borderBottomWidth: 0.2,
+      borderColor: "#a6a6a6"
+      }}>
+      <Text style={{ flex: 1, fontSize: 14, color: "#595959"}}>{todo.content}</Text>
+      <Ionicons 
+      name="ios-checkmark" 
+      size={17}
+      color={isSuccess? "#595959": "#bfbfbf"}/>
+    </View>
+    )
+   
   }
 
   useEffect(() => {
@@ -69,31 +120,17 @@ export default function App() {
           position: "absolute",
         }}
       />
-       <FlatList
-      scrollEnabled={false}
-      data={columns}
-      numColumns={7}
-      
-      ListHeaderComponent={ListHeaderComponent}
-      keyExtractor={(_, index) => `column-${index}`}
-    />
-     <Calendar 
-      columns={columns}
-      selectedDate={selectedDate}
-      onPressLeftArrow={onPressLeftArrow}
-      onPressHeaderDate={onPressHeaderDate}
-      onPressRightArrow={onPressRightArrow}
-      onPressDate={onPressDate}
-    />
       <FlatList
-        
         data={todoList}
         contentContainerStyle={{ paddingTop: statusBarHeight }}
         ListHeaderComponent={ListHeaderComponent}
-        renderItem={({ item: todo }) => {
-          return <Text>{todo.content}</Text>;
-        }}
+        renderItem={renderItem}
       />
+      <AddTodoInput 
+      value={input}
+      onChangeText={setInput}
+      placeholder={`${dayjs(selectedDate).format('MM.D')}`}에 추가할 투두/>
+
       <DateTimePickerModal
         isVisible={isDatePickerVisible}
         mode="date"
