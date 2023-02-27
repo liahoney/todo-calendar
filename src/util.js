@@ -1,3 +1,4 @@
+{/* ios simulater on/off : cmd + shift + k */}
 import dayjs from "dayjs";
 
 import { getBottomSpace, getStatusBarHeight } from 'react-native-iphone-x-helper';
